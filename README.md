@@ -138,3 +138,44 @@ eval('({foo: 123})') // {foo: 123}
 - 数组的空位不影响length属性。
 - 数组最后一个成员后面有一个逗号，这不影响length属性的值，与没有这个逗号时效果一样。
 - 使用delete命令删除一个数组成员，会形成空位，并且不会影响length属性。
+
+
+#### 7. 函数的坑
+- 函数的name属性返回函数的名字但是下面这样的情况会返回什么？
+
+```javascript
+var f2 = function () {};
+f2.name // "f2"
+
+var f3 = function myName() {};
+f3.name // 'myName'
+
+// PS: 只有在变量的值是一个匿名函数时才是变量名。如果变量的值是一个具名函数，那么name属性返回function关键字之后的那个函数名。
+```
+
+- 函数的toString方法返回一个字符串，内容是函数的源码，内部的注释也可以返回。
+- 函数执行时所在的作用域，是定义时的作用域，而不是调用时所在的作用域。
+
+```javascript
+var x = function () {
+  console.log(a);
+};
+
+function y(f) {
+  var a = 2;
+  f();
+}
+
+y(x)
+// ReferenceError: a is not defined
+```
+
+- 函数出现同名参数则取最后出现的那个值。
+- 严格模式下，arguments对象是一个只读对象，修改它是无效的，但不会报错。
+- 两个连着的自执行函数必须带有分号，否则会报错。
+
+```javascript
+// 报错
+(function(){ /* code */ }())
+(function(){ /* code */ }())
+```
