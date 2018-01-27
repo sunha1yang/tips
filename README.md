@@ -95,7 +95,7 @@ for (var i = 0; i < 5; i++) {
 
 ```javascript
 
-var world = 'hello';
+var world = 'hello';
 
 world[1]; // h;
 world[10]; // undefined
@@ -105,7 +105,7 @@ world['biu']; // undefined
 - 字符串使用方括号时无法改变字符串中的单个字符。
 
 ```javascript
-var world = 'hello';
+var world = 'hello';
 
 world[1] = W;
 world; // hello
