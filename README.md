@@ -179,3 +179,97 @@ y(x)
 (function(){ /* code */ }())
 (function(){ /* code */ }())
 ```
+
+
+#### 8. 错误处理机制
+
+- Error 实例对象的一些属性：
+    > message：错误提示信息
+    > name：错误名称（非标准属性）
+    > stack：错误的堆栈（非标准属性）
+
+ - 原生错误类型
+    1. SyntaxError对象是解析代码时发生的语法错误。
+        > 触发时机：语法解析阶段
+    2. ReferenceError对象是引用一个不存在的变量时发生的错误。
+        > 触发时机：1、引用一个不存在的变量时。 2、将一个值分配给无法分配的对象，比如对函数的运行结果或者this赋值。
+    3. RangeError对象是一个值超出有效范围时发生的错误。
+        > 触发时机：1、数组长度为负数。 2、Number对象的方法参数超出范围。 3、函数堆栈超过最大值。
+    4. TypeError对象是变量或参数不是预期类型时发生的错误。
+        > 触发时机：对字符串、布尔值、数值等原始类型的值使用new命令。
+    5. URIError对象是 URI 相关函数的参数不正确时抛出的错误。
+        > 触发时机：主要涉及encodeURI()、decodeURI()、encodeURIComponent()、decodeURIComponent()、escape()和unescape()这六个函数。
+    6. eval函数没有被正确执行时，会抛出EvalError错误。
+
+- try…catch...finally和return的执行顺序问题
+1. try代码块没有发生错误，而且里面还包括return语句，但是finally代码块依然会执行。注意，只有在其执行完毕后，才会显示return语句的值。
+```javascript
+function idle(x) {
+  try {
+    console.log(x);
+    return 'result';
+  } finally {
+    console.log("FINALLY");
+  }
+}
+
+idle('hello')
+// hello
+// FINALLY
+// "result"
+```
+
+2. return语句的执行是排在finally代码之前，只是等finally代码执行完毕后才返回。
+
+```javascript
+var count = 0;
+function countUp() {
+  try {
+    return count;
+  } finally {
+    count++;
+  }
+}
+
+countUp()
+// 0
+count
+// 1
+
+// return语句的count的值，是在finally代码块运行之前就获取了。
+```
+
+3. try...catch...finally与return几者之间的执行顺序。
+
+```javascript
+function f() {
+  try {
+    console.log(0);
+    throw 'bug';
+  } catch(e) {
+    console.log(1);
+    return true; // 这句原本会延迟到 finally 代码块结束再执行
+    console.log(2); // 不会运行
+  } finally {
+    console.log(3);
+    return false; // 这句会覆盖掉前面那句 return
+    console.log(4); // 不会运行
+  }
+
+  console.log(5); // 不会运行
+}
+
+var result = f();
+// 0
+// 1
+// 3
+
+result
+// false
+```
+
+4. 如果函数内部执行发生错误但是被catch到后，外部不会发生错误且不会被外部catch捕捉到。
+
+
+
+
